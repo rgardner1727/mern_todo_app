@@ -28,6 +28,31 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+router.get('/:username', async (req, res, next) => {
+    try{
+        const userByUsername = await userExistsUsername(req.params.username);
+        if(!userByUsername)
+            return res.status(404).send(`User with username '${req.params.username}' does not exist.`);
+        res.json(userByUsername);
+    }catch(err){
+        res.status(500).send(`Error finding user with username '${req.params.username}'.`);
+    }
+})
+
+router.put('/:username/updatePassword', async (req, res, next) => {
+    try{
+        const userByUsername = await userExistsUsername(req.params.username);
+        if(!userByUsername)
+            return res.status(404).send(`Could not update user. User with username '${req.params.username}' does not exist.`);
+        await user.updateOne({username: req.params.username}, {$set: {password: req.body.password}});
+        res.status(204).send(`Password successfully updated for user with username '${req.params.username}'.`);
+    }catch(err){
+        console.log(err);
+        res.status(500).send(`Error updating password for user with username '${req.params.username}'.`);
+    }
+})
+
+/*
 //http://localhost:3000/users/exampleid GET
 router.get('/:id', async (req, res, next) => {
     try{
@@ -39,11 +64,30 @@ router.get('/:id', async (req, res, next) => {
         res.status(500).send(`Error finding user with id '${req.params.id}'`);
     }
 });
+*/
+
+/*
+router.get('/:id/todos', async (req, res, next) => {
+    try{
+        const userById = userExistsId(req.params.id);
+        if(userById == null)
+            return res.status(404).send(`Could not find todos. User with id '${req.params.id}' does not exist.`);
+        const usernameField = userById.username;
+        const userTodos = await user.find({username: usernameField});
+        if(userTodos.length == 0)
+            return res.status(404).send(`Could not find todos. User with id '${req.params.id}' does not have any todos.`);
+        res.json(userTodos);
+    }catch(err){
+        res.status(500).send(`Error finding todos for user with id '${req.params.id}'.`)
+    }
+})
+*/
 
 //http://locahost:3000/users/exampleusername/todos GET
 router.get('/:username/todos', async (req, res, next) => {
     try{
-        if(!boolUserExists(req.params.username))
+        const userByUsername = await userExistsUsername(req.params.username);
+        if(!userByUsername)
             return res.status(404).send(`Could not find todos. User with username '${req.params.username}' does not exist.`);
         const userTodos = await todo.find({username: req.params.username});
         if(userTodos.length == 0)
@@ -59,7 +103,8 @@ router.get('/:username/todos', async (req, res, next) => {
 //http://locahost:3000/users/exampleusername/todos POST
 router.post('/:username/todos', async (req, res, next) => {
     try{
-        if(!boolUserExists(req.params.username))
+        const userByUsername = await userExistsUsername(req.params.username);
+        if(!userByUsername)
             return res.status(404).send(`Could not create a new todo. User with username '${req.params.username}' does not exist.`);
         const newTodo = new todo(req.body);
         newTodo.username = req.params.username;
@@ -74,7 +119,8 @@ router.post('/:username/todos', async (req, res, next) => {
 //http://localhost:3000/users/exampleusername/todos/exampleid GET
 router.get('/:username/todos/:id', async (req, res, next) => {
     try{
-        if(!boolUserExists(req.params.username))
+        const userByUsername = await userExistsUsername(req.params.username);
+        if(!userByUsername)
             return res.status(404).send(`Could not find todo with id '${req.params.id}'. User with username '${req.params.username}' does not exist.`);
         const todoById = await todo.findById(req.params.id);
         if(!todoById)
@@ -86,8 +132,9 @@ router.get('/:username/todos/:id', async (req, res, next) => {
     }
 })
 
-const boolUserExists = async (usernameParam) => {
-    return (await user.find({username: usernameParam})) !== 0;
+const userExistsUsername = async (usernameParam) => {
+    const userByUsername = await user.find({username: usernameParam});
+    return userByUsername.length !== 0 ? userByUsername : null
 }
 
 module.exports = router;
