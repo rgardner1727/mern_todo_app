@@ -43,7 +43,7 @@ router.put('/:username/updatePassword', async (req, res, next) => {
     try{
         const userByUsername = await userExistsUsername(req.params.username);
         if(!userByUsername)
-            return res.status(404).send(`Could not update user. User with username '${req.params.username}' does not exist.`);
+            return res.status(404).send(`Could not update password. User with username '${req.params.username}' does not exist.`);
         await user.updateOne({username: req.params.username}, {$set: {password: req.body.password}});
         res.status(204).send(`Password successfully updated for user with username '${req.params.username}'.`);
     }catch(err){
@@ -52,36 +52,23 @@ router.put('/:username/updatePassword', async (req, res, next) => {
     }
 })
 
-/*
-//http://localhost:3000/users/exampleid GET
-router.get('/:id', async (req, res, next) => {
+router.put('/:username/updateUsername', async (req, res, next) => {
     try{
-        const userById = await user.findById(req.params.id);
-        if(!userById)
-            return res.status(404).send(`Could not find user. User with id '${req.params.id}' does not exist.`);
-        res.json(userById);
+        const userByUsername = await userExistsUsername(req.params.username);
+        if(!userByUsername)
+            return res.status(404).send(`Could not update username. User with username '${req.params.username}' does not exist.`);
+        await user.updateOne({username: req.params.username}, {$set: {username: req.body.username}});
+        const userTodos = await todo.find({username: req.params.username});
+        if(!userTodos)
+            return res.status(204).send(`User with username '${req.params.username}' has successfully been changed to '${req.body.username}'.`);
+        await todo.updateMany({username: req.params.username}, {$set: {username: req.body.username}});
+        res.status(204).send(`User with username '${req.params.username}' has successfully been changed to '${req.body.username}'. User todos have also been updated.`);
     }catch(err){
-        res.status(500).send(`Error finding user with id '${req.params.id}'`);
-    }
-});
-*/
-
-/*
-router.get('/:id/todos', async (req, res, next) => {
-    try{
-        const userById = userExistsId(req.params.id);
-        if(userById == null)
-            return res.status(404).send(`Could not find todos. User with id '${req.params.id}' does not exist.`);
-        const usernameField = userById.username;
-        const userTodos = await user.find({username: usernameField});
-        if(userTodos.length == 0)
-            return res.status(404).send(`Could not find todos. User with id '${req.params.id}' does not have any todos.`);
-        res.json(userTodos);
-    }catch(err){
-        res.status(500).send(`Error finding todos for user with id '${req.params.id}'.`)
+        if(!err.code == 11000)
+            return res.status(500).send(`Error updating user with username '${req.params.username}' to '${req.body.username}'.`);
+        res.status(404).send(`Failed update username. A user with the username '${req.body.username}' already exists`);
     }
 })
-*/
 
 //http://locahost:3000/users/exampleusername/todos GET
 router.get('/:username/todos', async (req, res, next) => {
@@ -124,11 +111,26 @@ router.get('/:username/todos/:id', async (req, res, next) => {
             return res.status(404).send(`Could not find todo with id '${req.params.id}'. User with username '${req.params.username}' does not exist.`);
         const todoById = await todo.findById(req.params.id);
         if(!todoById)
-            return res.status(404).send(`Todo with id '${req.params.id}' for user '${req.params.username}' does not exist.`);
+            return res.status(404).send(`Could not find todo. Todo with id '${req.params.id}' for user '${req.params.username}' does not exist.`);
         res.json(todoById);
     }catch(err){
         console.log(err);
         res.status(500).send(`Error finding todo with id '${req.params.id}' for user '${req.params.username}'.`)
+    }
+})
+
+router.put('/:username/todos/:id', async (req, res, next) => {
+    try{
+        const userByUsername = await userExistsUsername(req.params.username); 
+        if(!userByUsername)
+            return res.status(404).send(`Could not update todo with id '${req.params.id}'. User with username '${req.params.username}' does not exist.`);
+        const todoById = await todo.findById(req.params.id);
+        if(!todoById)
+            return res.status(404).send(`Could not update todo. Todo with id '${req.params.id}' for user '${req.params.username}' does not exist.`);
+        await todo.updateOne({_id: req.params.id}, {$set: {text: req.body.text, completed: req.body.completed}});
+        res.status(204).send(`Successfully updated todo with id '${req.params.id}'.`);
+    }catch(err){
+        res.status(500).send(`Error updating todo with id '${req.params.id}'.`);
     }
 })
 
