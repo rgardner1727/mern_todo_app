@@ -3,12 +3,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const mongoose = require('mongoose')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+const todosRouter = require('./routes/todos');
 var loginRouter = require('./routes/login');
 const registerRouter = require('./routes/register');
 
@@ -27,7 +29,8 @@ app.use(cors())
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/todos', todosRouter);
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
 
-module.exports = app
+module.exports = app;
