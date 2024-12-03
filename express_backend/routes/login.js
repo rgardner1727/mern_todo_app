@@ -3,6 +3,7 @@ const router = express.Router();
 const user = require('../models/userSchema');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+require('dotenv').config();
 
 router.post('/', async (req, res, next) => {
     const { username, password } = req.body;
@@ -13,7 +14,7 @@ router.post('/', async (req, res, next) => {
         const matches = await bcrypt.compare(password, userByUsername.password);
         if(!matches)
             return res.status(401).send(`Invalid credentials for user with username '${username}'.`);
-        const token = jwt.sign({id: user.id}, 'placeholder_secret_key', {expiresIn: '15m'});
+        const token = jwt.sign({id: user.id}, process.env.SECRET_KEY, {expiresIn: '15m'});
         res.json({token});
     }catch(err){
         console.log(err);
