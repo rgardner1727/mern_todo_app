@@ -13,12 +13,6 @@ const deleteUsers = async () => {
     mongoose.connection.close();
 }
 
-const deleteTodos = async () => {
-    await todo.deleteMany({});
-    console.log('Successfully deleted todos.');
-    mongoose.connection.close();
-}
-
 const checkTodoStructure = async () => {
     try{
         const todos = await todo.find();
