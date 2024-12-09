@@ -9,7 +9,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
     try{
         const users = await user.find();
         if(users.length == 0)
-            return res.status(404).send('No users currently exist.');
+            return res.status(204).send('No users currently exist.');
         res.json(users)
     }catch(err){
         res.status(500).send('Error finding users');

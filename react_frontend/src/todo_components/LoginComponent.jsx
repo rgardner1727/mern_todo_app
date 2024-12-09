@@ -1,29 +1,51 @@
-import axios from "axios"
-import { useState } from "react"
+import axios from "axios";
+import { useContext, useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import '../todo_css/todos.css';
+import TokenContext from "../contexts/TokenContext";
+import UsernameContext from "../contexts/UsernameContext";
+
 const LoginComponent = () => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+    const {token, setToken} = useContext(TokenContext);
+
+    const {usernameContext, setUsernameContext} = useContext(UsernameContext);
+
+    const navigate = useNavigate();
+
+    const [errorMessage, setErrorMessage] = useState({});
+
+
     const handleSubmit = async (e) => {
-        axios.post("http://localhost:3000/login", {username, password})
-            .then((response) => console.log(response.data))
-            .catch(error => console.log(error));
+        e.preventDefault();
+        try{
+            const response = await axios.post('http://localhost:3000/login', {username, password});
+            const jwtToken = response.data.token;
+            setToken(jwtToken);
+            setUsernameContext(username);
+            navigate(`/todos/${usernameContext}`);
+        }catch(err){
+            setErrorMessage({message: 'Invalid credentials provided'});
+        }
     }
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
+        <div className="container">
+            <form className="custom-form" onSubmit={handleSubmit}>
+                {errorMessage && <p>{errorMessage.message}</p>}
                 <h2>Login to view your todos.</h2>
                 <fieldset>
-                    <label for="username">Username:</label>
+                    <label htmlFor="username">Username:</label>
                     <input type="text" id="username" name="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Enter your username."></input>
                 </fieldset>
                 <fieldset>
-                    <label for="password">Password:</label>
+                    <label htmlFor="password">Password:</label>
                     <input type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password."></input>
                 </fieldset>
-                <button type="submit">Login</button>
+                <button className="submit-button" type="submit">Login</button>
             </form>
         </div>
     )
