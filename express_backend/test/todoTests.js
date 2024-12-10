@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const config = require('../config/mongo_config');
 const todo = require('../models/todoSchema');
+require('dotenv').config();
 
-mongoose.connect(config.db)
+mongoose.connect(process.env.DATABASE_URL)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.log('Failed to connect to MongoDB', err))
 

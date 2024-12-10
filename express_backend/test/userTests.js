@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
-const config = require('../config/mongo_config');
 const user = require('../models/userSchema');
 const todo = require('../models/todoSchema');
+require('dotenv').config();
 
-mongoose.connect(config.db)
+console.log(process.env.DATABASE_URL);
+
+mongoose.connect(process.env.DATABASE_URL)
         .then(() => console.log('Connected to MongoDB'))
         .catch(err => console.log('Error connecting to MongoDB', err));
 
@@ -11,18 +13,6 @@ const deleteUsers = async () => {
     await user.deleteMany({});
     console.log('Succesfully deleted users.');
     mongoose.connection.close();
-}
-
-const checkTodoStructure = async () => {
-    try{
-        const todos = await todo.find();
-        if(todos)
-            console.log(todos);
-        else
-            console.log('Failed to find todos'); 
-    }catch(err){
-        console.log(err);
-    }
 }
 
 deleteUsers();

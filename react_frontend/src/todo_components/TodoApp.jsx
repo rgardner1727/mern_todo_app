@@ -5,6 +5,7 @@ import { TokenContextProvider } from "../contexts/TokenContext";
 import { UsernameContextProvider } from "../contexts/UsernameContext";
 import UpdateTodoComponent from "./UpdateTodoComponent";
 import CreateTodoComponent from "./CreateTodoComponent";
+import RegisterComponent from "./RegisterComponent";
 
 const TodoApp = () => {
     return (
@@ -12,6 +13,7 @@ const TodoApp = () => {
             <UsernameContextProvider>
                 <BrowserRouter>
                     <Routes>
+                        <Route path='/register' element={<RegisterComponent/>}/>
                         <Route path='/login' element={<LoginComponent/>}/>
                         <Route path='/todos/:username' element={<DisplayTodosComponent/>}/>
                         <Route path='/todos/:username/:id' element={<UpdateTodoComponent/>}/>

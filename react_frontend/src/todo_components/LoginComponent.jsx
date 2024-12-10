@@ -21,6 +21,10 @@ const LoginComponent = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if(!username)
+            return setErrorMessage({message: 'Username is required'});
+        if(!password)
+            return setErrorMessage({message: 'Password is required'});
         try{
             const response = await axios.post('http://localhost:3000/login', {username, password});
             const jwtToken = response.data.token;
@@ -28,7 +32,11 @@ const LoginComponent = () => {
             setUsernameContext(username);
             navigate(`/todos/${usernameContext}`);
         }catch(err){
-            setErrorMessage({message: 'Invalid credentials provided'});
+            if(err.status === 404)
+                return setErrorMessage({message: 'Invalid username'});
+            if(err.status === 401)
+                return setErrorMessage({message: 'Invalid password'});
+            setErrorMessage({message: 'Error logging in'});
         }
     }
 
