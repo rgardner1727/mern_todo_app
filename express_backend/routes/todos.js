@@ -11,7 +11,7 @@ router.get('/:username', authenticateToken, async (req, res, next) => {
             return res.status(404).send(`Could not find todos. User with username '${req.params.username}' does not exist.`);
         const userTodos = await todo.find({username: req.params.username});
         if(userTodos.length == 0)
-            return res.status(404).send(`Could not find todos. User with username '${req.params.username}' does not have any todos.`);
+            return res.status(204).send(`Could not find todos. User with username '${req.params.username}' does not have any todos.`);
         res.json(userTodos);
     }
     catch(err){

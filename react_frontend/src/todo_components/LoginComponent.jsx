@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useContext, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import '../todo_css/todos.css';
 import TokenContext from "../contexts/TokenContext";
 import UsernameContext from "../contexts/UsernameContext";
 
@@ -16,7 +15,7 @@ const LoginComponent = () => {
 
     const navigate = useNavigate();
 
-    const [errorMessage, setErrorMessage] = useState({});
+    const [errorMessage, setErrorMessage] = useState(null);
 
 
     const handleSubmit = async (e) => {
@@ -41,9 +40,9 @@ const LoginComponent = () => {
     }
 
     return (
-        <div className="container">
+        <main>
             <form className="custom-form" onSubmit={handleSubmit}>
-                {errorMessage && <p>{errorMessage.message}</p>}
+                {errorMessage && <p className="error-message">{errorMessage.message}</p>}
                 <h2>Login to view your todos.</h2>
                 <fieldset>
                     <label htmlFor="username">Username:</label>
@@ -55,7 +54,7 @@ const LoginComponent = () => {
                 </fieldset>
                 <button className="submit-button" type="submit">Login</button>
             </form>
-        </div>
+        </main>
     )
 }
 

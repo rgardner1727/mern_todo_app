@@ -21,27 +21,27 @@ const RegisterComponent = () => {
             navigate('/login');
         }catch(err){
             if(err.status === 401)
-                return setErrorMessage({message: 'User with the provided username already exists'});
+                return setErrorMessage({message: 'Username already in use'});
             setErrorMessage({message: 'Error registering user'});
         }
     }
 
     return (
-        <div className='container'>
+        <main>
             <form className='custom-form' onSubmit={handleSubmit}>
-                {errorMessage && <p>{errorMessage.message}</p>}
+                {errorMessage && <p className='error-message'>{errorMessage.message}</p>}
                 <h2>Register to create todos</h2>
                 <fieldset>
-                    <label htmlFor='username'>Username</label>
+                    <label htmlFor='username'>Username:</label>
                     <input type='text' id='username' name='username' value={username} onChange={e => setUsername(e.target.value)} placeholder='Enter a username'></input>
                 </fieldset>
                 <fieldset>
-                    <label htmlFor='password'>Password</label>
+                    <label htmlFor='password'>Password:</label>
                     <input type='password' id='password' name='password' value={password} onChange={e => setPassword(e.target.value)} placeholder='Enter a password'></input>
                 </fieldset>
                 <button className='submit-button' type='submit'>Register</button>
             </form>
-        </div>
+        </main>
     )
 }
 

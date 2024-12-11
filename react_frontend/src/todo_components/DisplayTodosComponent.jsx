@@ -27,20 +27,9 @@ const DisplayTodosComponent = () => {
         }
     }
 
-    const handleMarkAsCompleted = async (id) => {
-        try{
-            const response = await axios.delete(`http://localhost:3000/todos/${usernameContext}/${id}`, {headers: {Authorization: `Bearer ${token}`}});
-            if(response.status !== 204)
-                return alert('Failed to delete todo.');
-            await retrieveTodos();
-        }catch(err){
-            console.log(err);
-        }
-    }
-
     return (
         <main>
-            <div className='form-container'>
+            <div className="table-container">
                 <h2>Your Todos</h2>
                 <table className='custom-table'>
                     <thead>
@@ -51,16 +40,12 @@ const DisplayTodosComponent = () => {
                     </thead>
                     <tbody>
                         {
-                            todos.map(
-                                t => (
-                                    <tr className='selectable-row' key={t._id}>
-                                        <td>{t.text}</td>
-                                        <td>{t.completed.toString()}</td>
-                                        <td><button onClick={() => navigate(`/todos/${usernameContext}/${t._id}`)}>Update</button></td>
-                                        <td><button onClick={() => handleMarkAsCompleted(t._id)}>Mark as completed</button></td>
-                                    </tr>
-                                )
-                            )
+                            todos.map(t => (
+                                <tr className="selectable-row" key={t._id} onClick={() => navigate(`/todos/${usernameContext}/${t._id}`)}>
+                                    <td>{t.text}</td>
+                                    <td>{t.completed.toString()}</td>
+                                </tr>
+                            ))
                         }
                     </tbody>
                 </table>
