@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const RegisterComponent = () => {
+
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const [errorMessage, setErrorMessage] = useState({});
+    const [errorMessage, setErrorMessage] = useState(null);
 
     const navigate = useNavigate();
 
@@ -27,8 +28,8 @@ const RegisterComponent = () => {
     }
 
     return (
-        <main>
-            <form className='custom-form' onSubmit={handleSubmit}>
+        <main className="main">
+            <form className='form' onSubmit={handleSubmit}>
                 {errorMessage && <p className='error-message'>{errorMessage.message}</p>}
                 <h2>Register to create todos</h2>
                 <fieldset>

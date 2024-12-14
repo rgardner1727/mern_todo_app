@@ -1,27 +1,29 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginComponent from "./LoginComponent";
 import DisplayTodosComponent from "./DisplayTodosComponent";
-import { TokenContextProvider } from "../contexts/TokenContext";
-import { UsernameContextProvider } from "../contexts/UsernameContext";
+import { AuthenticationContextProvider } from "../contexts/AuthenticationContext";
 import UpdateTodoComponent from "./UpdateTodoComponent";
 import CreateTodoComponent from "./CreateTodoComponent";
 import RegisterComponent from "./RegisterComponent";
+import HeaderComponent from "./HeaderComponent";
+import FooterComponent from "./FooterComponent";
+import AuthenticatedRouteComponent from "./AuthenticatedRouteComponent";
 
 const TodoApp = () => {
     return (
-        <TokenContextProvider>
-            <UsernameContextProvider>
-                <BrowserRouter>
+        <AuthenticationContextProvider>
+            <BrowserRouter>
+                <HeaderComponent/>
                     <Routes>
-                        <Route path='/register' element={<RegisterComponent/>}/>
                         <Route path='/login' element={<LoginComponent/>}/>
-                        <Route path='/todos/:username' element={<DisplayTodosComponent/>}/>
-                        <Route path='/todos/:username/:id' element={<UpdateTodoComponent/>}/>
-                        <Route path='/todos/:username/createTodo' element={<CreateTodoComponent/>}/>
+                        <Route path='/register' element={<RegisterComponent/>}/>
+                        <Route path='/todos/:username' element={<AuthenticatedRouteComponent><DisplayTodosComponent/></AuthenticatedRouteComponent>}/>
+                        <Route path='/todos/:username/:id' element={<AuthenticatedRouteComponent><UpdateTodoComponent/></AuthenticatedRouteComponent>}/>
+                        <Route path='/todos/:username/createTodo' element={<AuthenticatedRouteComponent><CreateTodoComponent/></AuthenticatedRouteComponent>}/>
                     </Routes>
-                </BrowserRouter>
-            </UsernameContextProvider>
-        </TokenContextProvider>
+                <FooterComponent/>
+            </BrowserRouter>
+        </AuthenticationContextProvider>
     )
 }
 

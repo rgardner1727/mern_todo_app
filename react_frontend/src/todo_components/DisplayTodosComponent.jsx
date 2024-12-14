@@ -1,16 +1,15 @@
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import TokenContext from "../contexts/TokenContext";
-import UsernameContext from "../contexts/UsernameContext";
+import AuthenticationContext from "../contexts/AuthenticationContext";
 
 const DisplayTodosComponent = () => {
     
     const [todos, setTodos] = useState([]);
 
-    const {token, setToken} = useContext(TokenContext);
+    const {token, setToken} = useContext(AuthenticationContext);
 
-    const {usernameContext, setUsernameContext} = useContext(UsernameContext);
+    const username = useParams().username;
 
     const navigate = useNavigate();
 
@@ -18,7 +17,7 @@ const DisplayTodosComponent = () => {
 
     const retrieveTodos = async () => {
         try{
-            const response = await axios.get(`http://localhost:3000/todos/${usernameContext}`, {headers: {Authorization: `Bearer ${token}`}});
+            const response = await axios.get(`http://localhost:3000/todos/${username}`, {headers: {Authorization: `Bearer ${token}`}});
             if(!response.status === 200)
                 return alert('Failed to retrieve todos.');
             setTodos(response.data);
@@ -28,7 +27,7 @@ const DisplayTodosComponent = () => {
     }
 
     return (
-        <main>
+        <main className="main">
             <div className="table-container">
                 <h2>Your Todos</h2>
                 <table className='custom-table'>
@@ -40,16 +39,17 @@ const DisplayTodosComponent = () => {
                     </thead>
                     <tbody>
                         {
-                            todos.map(t => (
-                                <tr className="selectable-row" key={t._id} onClick={() => navigate(`/todos/${usernameContext}/${t._id}`)}>
-                                    <td>{t.text}</td>
-                                    <td>{t.completed.toString()}</td>
-                                </tr>
-                            ))
+                            todos ? 
+                                todos.map(t => (
+                                    <tr key={t._id} className="selectable-row" onClick={() => navigate(`/todos/${username}/${t._id}`)}>
+                                        <td>{t.text}</td>
+                                        <td>{t.completed.toString()}</td>
+                                    </tr>
+                                )) : <tr></tr>
                         }
                     </tbody>
                 </table>
-                <button className="submit-button"onClick={() => navigate(`/todos/${usernameContext}/createTodo`)}>Create New Todo</button>
+                <button className="submit-button"onClick={() => navigate(`/todos/${username}/createTodo`)}>Create New Todo</button>
             </div>
         </main>
     )

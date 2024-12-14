@@ -1,33 +1,32 @@
 import { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import TokenContext from '../contexts/TokenContext';
-import UsernameContext from '../contexts/UsernameContext';
+import AuthenticationContext from '../contexts/AuthenticationContext';
 
 const CreateTodoComponent = () => {
-    const {token} = useContext(TokenContext);
+    const {token} = useContext(AuthenticationContext);
 
     const navigate = useNavigate();
 
-    const {usernameContext} = useContext(UsernameContext);
+    const username = useParams().username;
 
     const [text, setText] = useState('');
 
     const handleSubmit = async e => {
         e.preventDefault();
         try {
-            const response = await axios.post(`http://localhost:3000/todos/${usernameContext}`, {text}, {headers: {Authorization: `Bearer ${token}`}});
+            const response = await axios.post(`http://localhost:3000/todos/${username}`, {text}, {headers: {Authorization: `Bearer ${token}`}});
             if(response.status !== 201)
                 return;
-            navigate(`/todos/${usernameContext}`);
+            navigate(`/todos/${username}`);
         }catch(err){
             console.log(err);
         }
     }
 
     return (
-        <main>
-            <form className="custom-form" onSubmit={handleSubmit}>
+        <main className='main'>
+            <form className="form" onSubmit={handleSubmit}>
                 <h2>Create Todo</h2>
                 <fieldset>
                     <label htmlFor='text'>Text</label>

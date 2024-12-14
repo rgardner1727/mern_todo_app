@@ -1,17 +1,14 @@
 import axios from "axios";
 import { useContext, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import TokenContext from "../contexts/TokenContext";
-import UsernameContext from "../contexts/UsernameContext";
+import AuthenticationContext from "../contexts/AuthenticationContext";
 
 const LoginComponent = () => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const {token, setToken} = useContext(TokenContext);
-
-    const {usernameContext, setUsernameContext} = useContext(UsernameContext);
+    const {token, setToken, isAuthenticated, setIsAuthenticated} = useContext(AuthenticationContext);
 
     const navigate = useNavigate();
 
@@ -28,8 +25,8 @@ const LoginComponent = () => {
             const response = await axios.post('http://localhost:3000/login', {username, password});
             const jwtToken = response.data.token;
             setToken(jwtToken);
-            setUsernameContext(username);
-            navigate(`/todos/${usernameContext}`);
+            setIsAuthenticated(true);
+            navigate(`/todos/${username}`);
         }catch(err){
             if(err.status === 404)
                 return setErrorMessage({message: 'Invalid username'});
@@ -40,8 +37,8 @@ const LoginComponent = () => {
     }
 
     return (
-        <main>
-            <form className="custom-form" onSubmit={handleSubmit}>
+        <main className="main">
+            <form className="form" onSubmit={handleSubmit}>
                 {errorMessage && <p className="error-message">{errorMessage.message}</p>}
                 <h2>Login to view your todos.</h2>
                 <fieldset>
